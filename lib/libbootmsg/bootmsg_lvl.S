@@ -58,9 +58,9 @@ ENTRY(bootmsg_cp)
 	bl      io_putchar      // print character
 	mr	r3, r9
 	bl      io_printhex16   // print checkpoint ID
-	.rept   5
-	li      r3,'\b'
-	bl      io_putchar      // print backspaces
+	.rept   1
+	li      r3,'\n'
+	bl      io_putchar      // print newline
 	.endr
 	mtlr	r11
 	blr
@@ -77,8 +77,6 @@ ENTRY(print_msg)
 	mr	r12, r5         // Save type (char [CWE])
 	li	r3, '\n'        // make it a new line
 	bl      io_putchar
-	li	r3, '\r'
-	bl      io_putchar
 	mr	r3, r12         // restore type
 	bl      io_putchar      // print character
 	mr	r3, r9          // restore ID
@@ -88,8 +86,6 @@ ENTRY(print_msg)
 	mr	r3, r10         // restore ptr to string
 	bl      io_print        // print message
 	li	r3, '\n'        // add a new line
-	bl      io_putchar
-	li	r3, '\r'
 	bl      io_putchar
 	mtlr	r11             // restore linkage register
 	blr
