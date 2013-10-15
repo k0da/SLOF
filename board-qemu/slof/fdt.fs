@@ -107,28 +107,6 @@ fdt-check-header
   fdt-strings + dup from-cstring
 ;
 
-: hex64-decode-unit ( str len ncells -- addr.lo ... addr.hi )
-  dup 2 <> IF
-     hex-decode-unit
-  ELSE
-     drop
-     base @ >r hex
-     $number IF 0 0 ELSE xlsplit THEN
-     r> base !
-  THEN
-;
-
-: hex64-encode-unit ( addr.lo ... addr.hi ncells -- str len )
-  dup 2 <> IF
-     hex-encode-unit
-  ELSE
-     drop
-     base @ >r hex
-     lxjoin (u.)
-     r> base !
-  THEN
-;
-
 : fdt-create-dec  s" decode-unit" $CREATE , DOES> @ hex64-decode-unit ;
 : fdt-create-enc  s" encode-unit" $CREATE , DOES> @ hex64-encode-unit ;
 
@@ -226,7 +204,9 @@ fdt-unflatten-tree
 
 \ Find memory size
 : fdt-parse-memory
-    " /memory" find-device
+    \ XXX FIXME Handle more than one memory node, and deal
+    \     with RMA vs. full access
+    " /memory@0" find-device
     " reg" get-node get-package-property IF throw -1 THEN
 
     \ XXX FIXME Assume one entry only in "reg" property for now
@@ -358,44 +338,4 @@ fdt-claim-reserve
    device-end
 ;
 s" /" find-node fdt-fix-phandles
-
-
-\ Remaining bits from root.fs
-
-defer (client-exec)
-defer client-exec
-
-\ defined in slof/fs/client.fs
-defer callback
-defer continue-client
-
-: set-chosen ( prop len name len -- )
-  s" /chosen" find-node set-property ;
-
-: get-chosen ( name len -- [ prop len ] success )
-  s" /chosen" find-node get-property 0= ;
-
-" /" find-device
-
-new-device
-  s" aliases" device-name
-finish-device
-
-new-device
-  s" options" device-name
-finish-device
-
-new-device
-  s" openprom" device-name
-  s" BootROM" device-type
-finish-device
-
-new-device 
-#include <packages.fs>
-finish-device
-
-: open true ;
-: close ;
-
-device-end
 

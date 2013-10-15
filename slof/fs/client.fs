@@ -121,6 +121,11 @@ ALSO client-voc DEFINITIONS
    debug-client-interface? IF
       ." ci: finddevice " 2dup type cr
    THEN
+   2dup " /memory" str= IF
+     ." * finddevice /memory grub workaround *" cr
+     2drop
+     " /memory@0"
+   THEN
    find-node dup 0= IF drop -1 THEN
 ;
 
@@ -171,10 +176,19 @@ ALSO client-voc DEFINITIONS
 ;
 
 : close ( ihandle -- )
-   debug-client-interface? IF
-      ." ci: close " dup . cr
-   THEN
-   close-dev
+    debug-client-interface? IF
+	." ci: close " dup . cr
+    THEN
+    s" stdin" get-chosen IF
+	decode-int nip nip over = IF
+	    \ End of life of SLOF now, call platform quiesce as quiesce
+	    \ is an undocumented extension and not everybody supports it
+	    close-dev
+	    quiesce
+	THEN
+    ELSE
+	close-dev
+    THEN
 ;
 
 \ Now implemented: should return -1 if no such method exists in that node

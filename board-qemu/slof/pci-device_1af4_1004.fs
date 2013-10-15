@@ -1,5 +1,5 @@
 \ *****************************************************************************
-\ * Copyright (c) 2004, 2008 IBM Corporation
+\ * Copyright (c) 2012 IBM Corporation
 \ * All rights reserved.
 \ * This program and the accompanying materials
 \ * are made available under the terms of the BSD License
@@ -10,19 +10,15 @@
 \ *     IBM Corporation - initial implementation
 \ ****************************************************************************/
 
+\ Handle virtio-net device
 
-s" mouse" device-name
-s" mouse" device-type
+s" virtio [ scsi ]" type cr
 
-."   USB Mouse" cr
+my-space pci-device-generic-setup
+pci-master-enable
+pci-mem-enable
+pci-io-enable
 
-1 encode-int s" configuration#" property
-2 encode-int s" #buttons" property
-4 encode-int s" assigned-addresses" property
-2 encode-int s" reg" property
+s" virtio-scsi.fs" included
 
-: open true ;
-: close ;
-: get-event ( msec -- pos.x pos.y buttons true|false )
-;
-
+pci-device-disable

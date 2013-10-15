@@ -18,8 +18,8 @@ false VALUE debug-disk-label?
 \ partition. This is required to keep the load time in reasonable limits if the
 \ PREP partition becomes big.
 \ If we ever want to put a large kernel with initramfs from a PREP partition
-\ we might need to increase this value. The default value is 16384 blocks (8MB)
-d# 16384 value max-prep-partition-blocks
+\ we might need to increase this value. The default value is 65536 blocks (32MB)
+d# 65536 value max-prep-partition-blocks
 
 s" disk-label" device-name
 
@@ -120,8 +120,8 @@ CONSTANT /partition-entry
 : init-block ( -- )
    s" block-size" ['] $call-parent CATCH IF ABORT" parent has no block-size." THEN
    to block-size
-   d# 2048 alloc-mem
-   dup d# 2048 erase
+   d# 4096 alloc-mem
+   dup d# 4096 erase
    to block
    debug-disk-label? IF
       ." init-block: block-size=" block-size .d ." block=0x" block u. cr
@@ -368,7 +368,7 @@ CONSTANT /partition-entry
 
 : load-chrp-boot-file ( addr -- size )
    \ Create bootinfo.txt path name and load that file:
-   my-parent ihandle>phandle node>path
+   my-parent instance>path
    s" :\ppc\bootinfo.txt" $cat strdup       ( addr str len )
    open-dev dup 0= IF 2drop 0 EXIT THEN
    >r dup                                   ( addr addr R:ihandle )
@@ -387,7 +387,7 @@ CONSTANT /partition-entry
    THEN
 
    \ Create the full path to the boot loader:
-   my-parent ihandle>phandle node>path      ( addr fnstr fnlen nstr nlen )
+   my-parent instance>path      ( addr fnstr fnlen nstr nlen )
    s" :" $cat 2swap $cat strdup             ( addr str len )
    \ Update the bootpath:
    2dup encode-string s" bootpath" set-chosen
@@ -506,7 +506,7 @@ CONSTANT /partition-entry
 
 : close ( -- )
    debug-disk-label? IF ." Closing disk-label: block=0x" block u. ." block-size=" block-size .d cr THEN
-   block d# 2048 free-mem
+   block d# 4096 free-mem
 ;
 
 

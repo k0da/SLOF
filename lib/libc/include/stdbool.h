@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation
+ * Copyright (c) 2013 IBM Corporation
  * All rights reserved.
  * This program and the accompanying materials
  * are made available under the terms of the BSD License
@@ -10,11 +10,11 @@
  *     IBM Corporation - initial implementation
  *****************************************************************************/
 
-#include <ioctl.h>
-#include "systemcall.h"
+#ifndef _STDBOOL_H
+#define _STDBOOL_H
 
+#ifndef __cplusplus
+typedef enum { false = 0, true } bool;
+#endif
 
-int ioctl(int fd, int request, void *data)
-{
-    return syscall_3 (_ioctl_sc_nr, fd, request, (long) data);
-}
+#endif
