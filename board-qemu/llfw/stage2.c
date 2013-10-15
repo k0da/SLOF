@@ -168,7 +168,6 @@ void early_c_entry(uint64_t start_addr, uint64_t fdt_addr)
 	    (void (*)(uint64_t, uint64_t, uint64_t, uint64_t, uint64_t))
 	    &ofw_addr;
 	// re-enable the cursor
-	printf("%s%s", TERM_CTRL_RESET, TERM_CTRL_CRSON);
 	DEBUG("  [ofw_start=%p ofw_addr=0x%lx]\n", ofw_start, ofw_addr[0]);
 	ofw_addr[1] = ofw_addr[0];
 	/* Call the Open Firmware layer with ePAPR-style calling conventions:

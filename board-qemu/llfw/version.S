@@ -22,14 +22,10 @@
 .global print_version
 print_version:
 	bl	0f
-	.ascii	TERM_CTRL_RESET
-	.ascii	TERM_CTRL_CRSOFF
 	.ascii  " **********************************************************************"
 	.ascii	"\r\n"
-	.ascii	TERM_CTRL_BRIGHT
 	.ascii	PRODUCT_NAME
 	.ascii  " Starting\r\n"
-	.ascii  TERM_CTRL_RESET
 	.ascii  " Build Date = ", __DATE__, " ", __TIME__
 	.ascii	"\r\n"
 	.ascii  " FW Version = " , RELEASE
